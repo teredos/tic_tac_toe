@@ -28,17 +28,21 @@ class TicTacToe
 
   def set_player_pieces
     puts "'X' goes first. #{@player1.name}, would you like to play as 'X' or 'O'?"
-    @player1.piece = gets.chomp.capitalize
-    a_valid_piece?(@player1.piece)
-    @player2.piece = (@player1.piece == 'X' ? 'O' : 'X')
+    set_player1_piece
+    set_player2_piece
     puts "You chose '#{@player1.piece}', so #{@player2.name} will play as '#{@player2.piece}'"
   end
 
-  def a_valid_piece?(piece)
-    until %w[X O].include?(piece)
+  def set_player1_piece
+    @player1.piece = gets.chomp.capitalize
+    until %w[X O].include?(@player1.piece)
       puts "Error: Enter either 'X' or 'O'"
-      piece = gets.chomp.capitalize
+      @player1.piece = gets.chomp.capitalize
     end
+  end
+
+  def set_player2_piece
+    @player2.piece = (@player1.piece == 'X' ? 'O' : 'X')
   end
 
   def create_board
