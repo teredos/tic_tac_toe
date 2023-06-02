@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative 'board'
+require_relative 'player'
+
 # Starts a game of Tic-Tac-Toe
 class TicTacToe
   WINNING_COMBINATIONS = [[0, 1, 2], [0, 3, 6], [0, 4, 8], [1, 4, 7], [2, 4, 6], [2, 5, 8], [3, 4, 5], [6, 7, 8]].freeze
@@ -114,46 +117,3 @@ class TicTacToe
     start
   end
 end
-
-# Creates and stores information for the game board
-class Board
-  attr_accessor :values
-
-  def initialize
-    self.values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-  end
-
-  def visual
-    puts ''
-    row1
-    puts '   ---+---+---'
-    row2
-    puts '   ---+---+---'
-    row3
-    puts ''
-  end
-
-  def row1
-    puts "    #{values[0]} | #{values[1]} | #{values[2]} "
-  end
-
-  def row2
-    puts "    #{values[3]} | #{values[4]} | #{values[5]} "
-  end
-
-  def row3
-    puts "    #{values[6]} | #{values[7]} | #{values[8]} "
-  end
-end
-
-# Creates and stores information of each player
-class Player
-  attr_reader :name
-  attr_accessor :piece
-
-  def initialize(name)
-    @name = name
-  end
-end
-
-TicTacToe.new
