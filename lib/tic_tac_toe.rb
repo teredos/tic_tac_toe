@@ -7,37 +7,30 @@ require_relative 'player'
 class TicTacToe
   WINNING_COMBINATIONS = [[0, 1, 2], [0, 3, 6], [0, 4, 8], [1, 4, 7], [2, 4, 6], [2, 5, 8], [3, 4, 5], [6, 7, 8]].freeze
 
-  def initialize
-    prep_game
-    start
-  end
-
   def prep_game
     puts 'Welcome to Tic-Tac-Toe'
 
-    set_player_names
+    @player1 = new_player(1)
+    @player2 = new_player(2)
     set_player_pieces
     sleep 1
     create_board
   end
 
-  def set_player_names
-    puts "What's the name of Player 1?"
-    @player1 = Player.new(gets.chomp.capitalize)
-
-    puts "What's the name of Player 2?"
-    @player2 = Player.new(gets.chomp.capitalize)
+  def new_player(num)
+    puts "What's the name of Player #{num}?"
+    Player.new(gets.chomp)
   end
 
   def set_player_pieces
     puts "'X' goes first. #{@player1.name}, would you like to play as 'X' or 'O'?"
-    set_player1_piece
+    @player1.piece = gets.chomp.capitalize
+    confirm_player1_piece
     set_player2_piece
     puts "You chose '#{@player1.piece}', so #{@player2.name} will play as '#{@player2.piece}'"
   end
 
-  def set_player1_piece
-    @player1.piece = gets.chomp.capitalize
+  def confirm_player1_piece
     until %w[X O].include?(@player1.piece)
       puts "Error: Enter either 'X' or 'O'"
       @player1.piece = gets.chomp.capitalize

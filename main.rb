@@ -2,4 +2,6 @@
 
 require_relative 'lib/tic_tac_toe'
 
-TicTacToe.new
+new_game = TicTacToe.new
+new_game.prep_game
+new_game.start
