@@ -5,7 +5,8 @@ require_relative 'player'
 
 # Starts a game of Tic-Tac-Toe
 class TicTacToe
-  WINNING_COMBINATIONS = [[0, 1, 2], [0, 3, 6], [0, 4, 8], [1, 4, 7], [2, 4, 6], [2, 5, 8], [3, 4, 5], [6, 7, 8]].freeze
+  WINNING_COMBINATIONS = [[0, 1, 2], [0, 3, 6], [0, 4, 8], [1, 4, 7],
+                          [2, 4, 6], [2, 5, 8], [3, 4, 5], [6, 7, 8]].freeze
 
   def prep_game
     puts 'Welcome to Tic-Tac-Toe'
@@ -14,7 +15,7 @@ class TicTacToe
     @player2 = new_player(2)
     set_player_pieces
     sleep 1
-    create_board
+    create_board.visual
   end
 
   def new_player(num)
@@ -24,27 +25,27 @@ class TicTacToe
 
   def set_player_pieces
     puts "'X' goes first. #{@player1.name}, would you like to play as 'X' or 'O'?"
-    @player1.piece = gets.chomp.capitalize
-    confirm_player1_piece
-    set_player2_piece
+    @player1.change_piece(player1_piece)
+    @player2.change_piece(player2_piece)
     puts "You chose '#{@player1.piece}', so #{@player2.name} will play as '#{@player2.piece}'"
   end
 
-  def confirm_player1_piece
-    until %w[X O].include?(@player1.piece)
+  def player1_piece
+    piece = gets.chomp.capitalize
+    until %w[X O].include?(piece)
       puts "Error: Enter either 'X' or 'O'"
-      @player1.piece = gets.chomp.capitalize
+      piece = gets.chomp.capitalize
     end
+    piece
   end
 
-  def set_player2_piece
-    @player2.piece = (@player1.piece == 'X' ? 'O' : 'X')
+  def player2_piece
+    @player1.piece == 'X' ? 'O' : 'X'
   end
 
   def create_board
     puts "\nThe numbers 1-9 signify the positions on the board"
     @board = Board.new
-    @board.visual
   end
 
   def start
@@ -53,29 +54,33 @@ class TicTacToe
 
   def player_turn(player)
     puts "#{player.name}, where would you like to place your '#{player.piece}'?"
+    adjust_board(player.piece, pick)
+    outcome_of_turn(player)
+  end
+
+  def pick
     pick = gets.chomp.to_i
     while @board.values.include?(pick) == false
       puts 'Error: Position invalid, try again'
       pick = gets.chomp.to_i
     end
-    adjust_board(player, pick)
-    outcome_of_turn(player)
+    pick
   end
 
-  def adjust_board(player, pick)
-    @board.values[pick - 1] = player.piece
+  def adjust_board(piece, pick)
+    @board.change_value(piece, pick)
     @board.visual
   end
 
   def outcome_of_turn(player)
     if winner?(player)
       puts "#{player.name} wins!"
-      play_again
-    elsif its_a_tie
+      new_game
+    elsif board_full?(@board)
       puts "It's a tie!"
-      play_again
+      new_game
     else
-      player == @player1 ? player_turn(@player2) : player_turn(@player1)
+      player_turn(player == @player1 ? @player2 : @player1)
     end
   end
 
@@ -87,26 +92,30 @@ class TicTacToe
     end
   end
 
-  def its_a_tie
+  def board_full?(board)
     [1, 2, 3, 4, 5, 6, 7, 8, 9].all? do |num|
-      @board.values.include?(num) == false
+      board.values.include?(num) == false
     end
   end
 
-  def play_again
-    sleep 1
-    puts "\nWould you like to play again? [Y/n]"
-    response = gets.chomp
-    until %w[Y N].include?(response.upcase) || response.empty?
-      puts 'Would you like to play again? [Y/n]'
-      response = gets.chomp
-    end
-    restart if response.upcase != 'N'
+  def new_game
+    restart if play_again?
   end
 
   def restart
     prep_game
     sleep 1
     start
+  end
+
+  def play_again?
+    sleep 1
+    puts "\nWould you like to play again? [Y/n]"
+    response = gets.chomp.to_s
+    until %w[Y N].include?(response.upcase) || response.empty?
+      puts 'Would you like to play again? [Y/n]'
+      response = gets.chomp.to_s
+    end
+    response.upcase != 'N'
   end
 end

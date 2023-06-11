@@ -2,10 +2,13 @@
 
 # Creates and stores information of each player
 class Player
-  attr_reader :name
-  attr_accessor :piece
+  attr_reader :name, :piece
 
   def initialize(name)
     @name = name
+  end
+
+  def change_piece(piece)
+    @piece = piece
   end
 end
